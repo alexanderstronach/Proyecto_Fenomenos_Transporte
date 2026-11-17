@@ -1,0 +1,286 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Paquetes base ----------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{mathpazo}
+\usepackage[margin=2.6cm]{geometry}
+\usepackage{microtype}
+
+% ---------- Matemática y unidades ----------
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{siunitx}
+\sisetup{output-decimal-marker={,}, per-mode=symbol, range-phrase={--}}
+\usepackage[version=4]{mhchem}      % \ce{H2O}, \ce{CH4 + 2O2 -> CO2 + 2H2O}
+
+% ---------- Figuras, tablas y gráficos ----------
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% ---------- Formato ----------
+\usepackage{enumitem}
+\usepackage{setspace}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+% ---------- Bibliografía ----------
+\usepackage[numbers,sort&compress]{natbib}
+
+% ---------- Hipervínculos (siempre al final) ----------
+\usepackage[colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black]{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+\setlist{itemsep=0.2em,topsep=0.3em}
+\captionsetup{font=small,labelfont=bf}
+
+% ---------- Datos ----------
+\newcommand{\semestre}{Segundo Semestre del 2026}
+\newcommand{\fecha}{13-11-2026}
+\newcommand{\integrantes}{Francisca María Pozo Parot\\Cristina Maria Undurraga Errázuriz\\Alexander Kyle Stronach Taverne}
+
+% ---------- Encabezado y pie ----------
+\setlength{\headheight}{14pt}
+\setlength{\footskip}{52pt}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancyfoot[L]{\scriptsize\begin{tabular}[b]{@{}l@{}}\integrantes\end{tabular}}
+\fancyfoot[C]{\small\begin{tabular}[b]{@{}c@{}}IIQ2003 -- Proyecto semestral\\ \fecha\end{tabular}}
+\fancyfoot[R]{\small P\'agina \thepage\ de \pageref{LastPage}}
+
+\begin{document}
+
+% ================= PORTADA =================
+\thispagestyle{empty}
+
+\noindent
+\begin{minipage}[c]{0.2\textwidth}
+  \includegraphics[width=\linewidth]{UC.png}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.78\textwidth}
+  \scshape
+  Pontificia Universidad Cat\'olica de Chile\\
+  Departamento de Ingenier\'ia Qu\'imica y Bioprocesos\\
+  IIQ2003 -- Fen\'omenos de Transporte\\
+  Profesor Felipe Huerta P\'erez\\
+  \semestre
+\end{minipage}
+
+\vspace{0.8em}
+\hrule
+
+\vspace*{\fill}
+
+\begin{center}
+  {\Huge\bfseries Proyecto semestral}\\[1em]
+  {\LARGE Modelamiento de fen\'omenos de transporte para Chile}\\[1.2em]
+  {\large \fecha}
+\end{center}
+
+\vspace*{\fill}
+
+\begin{center}
+  {\Large\bfseries Integrantes}\\[1em]
+  \integrantes
+\end{center}
+
+\newpage
+\setcounter{page}{1}
+
+% ================= CONTENIDO =================
+\section{Contextualización y justificación}
+
+\subsection{Descripción del problema y su relevancia en Chile}
+
+La leña constituye una de las principales fuentes de energía para calefacción residencial en la zona centro-sur de Chile. Sin embargo, su combustión genera emisiones de material particulado fino (MP\textsubscript{2,5}), contaminante que puede penetrar profundamente en el sistema respiratorio y provocar efectos adversos en la salud, como enfermedades respiratorias y cardiovasculares \cite{mma_norma}.
+
+Esta problemática es especialmente relevante en Talca y Maule, comunas que cuentan con un Plan de Descontaminación Atmosférica (PDA), establecido mediante el D.S. N.º 49/2015 y vigente desde el 28 de marzo de 2016, cuyo objetivo es recuperar la calidad del aire respecto del material particulado MP\textsubscript{10} \cite{mma_ds49}.
+
+\subsection{Magnitud del problema}
+
+Según la Cuenta Pública 2025 del PDA, Talca y Maule concentran aproximadamente 293.000 habitantes, de los cuales un 94\,\% reside en zonas urbanas. Asimismo, el inventario de emisiones indica que la combustión residencial de leña explica cerca del 81\,\% de las emisiones de MP\textsubscript{2,5} \cite{sma2021}. La persistencia del problema se refleja en que durante 2025 Talca superó la norma diaria de MP\textsubscript{2,5}, correspondiente a $50\ \mu\mathrm{g/m^3}$, durante 54 días entre abril y noviembre \cite{mma_cuenta2025}. Estos episodios afectan la calidad de vida de la población y pueden implicar restricciones al uso de calefactores residenciales.
+
+\subsection{El rol de la humedad de la leña}
+
+Uno de los factores que influye en la calidad de la combustión es el contenido de humedad de la madera. Cuando se utiliza leña húmeda, parte de la energía se consume en evaporar el agua contenida en ella, disminuyendo su aprovechamiento energético. Además, un calefactor de doble cámara presenta un factor de emisión de 5\,g de MP\textsubscript{2,5}/kg de leña con 25\,\% de humedad, cifra que aumenta a 10\,g/kg cuando se utiliza leña con 40\,\% de humedad \cite{mma2023}. Por ello, la NCh 2907-2005 establece como referencia para la leña seca un contenido de humedad igual o inferior al 25\,\% en base seca \cite{minenergia}.
+
+En este contexto, el proyecto estudiará el secado de leña de eucalipto (\textit{Eucalyptus globulus}) destinada a calefacción residencial en Talca. Esta especie permite delimitar el material de estudio y cuenta con antecedentes científicos nacionales sobre su comportamiento durante el secado natural \cite{ananias1991}.
+
+\subsection{Relación del fenómeno de transporte con los objetivos de sustentabilidad}
+
+El secado de la madera corresponde a un proceso de transferencia de masa, donde la humedad se desplaza desde el interior hacia la superficie de la pieza y posteriormente se transfiere al ambiente. Su velocidad depende de las propiedades del material y de las condiciones ambientales, como la temperatura y la humedad relativa del aire. Estudiar este fenómeno permite comprender cómo mejorar el secado de la biomasa y favorecer su aprovechamiento energético, contribuyendo potencialmente a disminuir las emisiones contaminantes asociadas a su combustión.
+
+\subsection{Soluciones que ofrece su modelado y resolución numérica}
+
+Se desarrollará un modelo bidimensional transiente de difusión de humedad, que permitirá representar las variaciones espaciales del contenido de agua en secciones axiales y radiales de la madera y su evolución a lo largo del tiempo. Mediante su resolución numérica, se podrán comparar distintas dimensiones de las piezas y condiciones ambientales representativas de Talca, con el propósito de estimar el tiempo necesario para alcanzar una humedad objetivo del 25\,\% en base seca. El aporte del modelo se evaluará mediante el tiempo requerido para alcanzar dicha humedad y la reducción de ese tiempo entre escenarios, lo que permitirá apoyar la planificación del secado antes del invierno y aportar información útil para productores y consumidores, con miras a mejorar la calidad de la leña destinada a calefacción residencial en Talca.
+
+%==========================================================
+\section{Descripción del modelo matemático}
+%==========================================================
+
+\paragraph{Modelo:} 2-D no estacionario (transiente).
+
+\paragraph{Fenómenos gobernantes:} Transferencia de masa.
+
+\paragraph{Coordenadas:} Cilindro con variación en $z$ y $r$.
+
+\subsection{Supuestos y simplificaciones}
+
+\begin{itemize}[noitemsep]
+    \item Se simplifica que la madera sea un cilindro.
+    \item Simetría respecto del plano medio.
+    \item Se considera simetría angular, por lo que la concentración de humedad no depende de la coordenada $\theta$.
+    \item Se considera que la humedad inicial está distribuida uniformemente en la madera.
+    \item Propiedades constantes para cada madera en específico (densidad, coeficiente de transferencia de masa, coeficiente de transferencia de calor y difusividad efectiva).
+    \item Se asume temperatura constante durante el proceso de secado, despreciando el acoplamiento de transferencia de calor y masa.
+    \item Se toma la madera entera como un medio homogéneo.
+    \item Difusión de humedad en madera isotrópica ($D_{trans} = D_{long} = D_{ef}$).
+    \item Se asume temperatura y humedad relativa constantes para el ambiente, acordes a la temporada y al mes en el que se está.
+    \item Se desprecia el rehumedecimiento de la madera, asumiendo leña protegida de lluvia.
+\end{itemize}
+
+\subsection{Variables}
+
+\begin{itemize}[noitemsep]
+    \item $M(r,z,t)$: Contenido de humedad en el leño $\left[\dfrac{\mathrm{kg_{agua}}}{\mathrm{kg_{madera\ seca}}}\right]$
+    \item $t$: Tiempo $[\mathrm{s}]$
+    \item $r$: Coordenada radial $[\mathrm{m}]$
+    \item $z$: Coordenada axial $[\mathrm{m}]$
+\end{itemize}
+
+\subsection{Parámetros}
+
+\begin{itemize}[noitemsep]
+    \item $h_m$: Coeficiente de transferencia de masa $\left[\mathrm{m/s}\right]$
+    \item $D_{trans}$: Difusividad transversal de humedad $\left[\mathrm{m^2/s}\right]$
+    \item $D_{long}$: Difusividad longitudinal de humedad $\left[\mathrm{m^2/s}\right]$
+    \item $D_{ef}$: Difusividad efectiva de humedad $\left[\mathrm{m^2/s}\right]$
+    \item $\rho_s$: Densidad de la madera $\left[\dfrac{\mathrm{kg_{madera\ seca}}}{\mathrm{m^3}}\right]$
+    \item $M_{eq}$: Humedad de equilibrio con el ambiente $\left[\dfrac{\mathrm{kg}}{\mathrm{kg}}\right]$
+    \item $M_{sup}$: Humedad en los bordes
+    \item $M_0$: Humedad inicial del leño $\left[\dfrac{\mathrm{kg_{agua}}}{\mathrm{kg_{madera\ seca}}}\right]$
+    \item $R$: Radio del leño $[\mathrm{m}]$
+    \item $L$: Largo del leño $[\mathrm{m}]$
+\end{itemize}
+
+\subsection{Balance diferencial}
+
+\begin{equation}
+    \frac{\partial M}{\partial t} = D_{ef}\left(\frac{\partial^2 M}{\partial r^2} + \frac{1}{r}\frac{\partial M}{\partial r} + \frac{\partial^2 M}{\partial z^2}\right)
+\end{equation}
+
+\subsection{Condiciones de borde e iniciales}
+
+\begin{align}
+    \left.\frac{\partial M}{\partial r}\right|_{r=0} &= 0 \\
+    M(r,z,0) &= M_0 \\
+    -D_{ef}\left.\frac{\partial M}{\partial z}\right|_{z=0} &= h_m\,(M_{sup} - M_{eq}) \\
+    -D_{ef}\left.\frac{\partial M}{\partial r}\right|_{r=R} &= h_m\,(M_{sup} - M_{eq})
+\end{align}
+
+\subsection{Objetivo}
+
+Se buscará el tiempo $t^{*}$ requerido para que
+\begin{equation}
+    M(t^{*}) = 0{,}25 .
+\end{equation}
+
+%===================================================
+\section{Planificación del trabajo}
+%===================================================
+
+% OJO: en el PDF la posición de cada "X" se perdió al extraer el texto.
+% Revisa que cada marca esté en la columna (fecha) correcta.
+
+\small
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}X *{6}{c}@{}}
+\toprule
+ & \multicolumn{2}{c}{\textbf{Noviembre}} & \multicolumn{2}{c}{\textbf{Noviembre}} & \multicolumn{2}{c}{\textbf{Diciembre}} \\
+\textbf{Tarea} & Mar 10 & Vie 13 & Mar 17 & Mar 24 & Mar 01 & Mar 08 \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Contextualización y justificación}} \\
+Descripción del problema & X & & & & & \\
+Relevancia y relación con sustentabilidad & X & & & & & \\
+Posibles soluciones que ofrecería el modelo & X & & & & & \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Descripción del modelo matemático}} \\
+Identificar fenómenos de transporte (calor, masa, momentum) & X & & & & & \\
+Tipo de modelo (1D o 2D, estacionario o no estacionario) & X & & & & & \\
+Variables involucradas & X & & & & & \\
+Condiciones de borde e iniciales & X & & & & & \\
+Supuestos y simplificaciones & X & & & & & \\
+\midrule
+\textbf{Entrega 1 (viernes 13, 13:30)} & & \multicolumn{5}{l}{} \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Feedback}} \\
+Integrar feedback de ayudante & & & X & & & \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Modelación}} \\
+Creación del modelo (código Jupyter) & & & X & & & \\
+Incorporar parámetros específicos de Chile & & & X & X & & \\
+Modelo numérico & & & X & X & & \\
+Análisis de independencia de grilla & & & & X & X & \\
+Resultados, validación y análisis & & & & X & X & \\
+Repositorio GitHub (comentar código, parámetros con unidades, figuras) & & & X & X & X & \\
+README.md (sistema, método numérico, grilla, instrucciones) & & & X & X & X & \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Informe}} \\
+Borrador de informe & & & & X & X & \\
+Revisar informe final & & & & & X & X \\
+\midrule
+\multicolumn{7}{@{}l}{\textit{Creación de video}} \\
+Guion y diapositivas para video & & & & X & X & \\
+Descripción del problema y relevancia & & & & & X & \\
+Presentación del modelo y esquema físico & & & & & X & \\
+Método numérico y programación & & & & & X & \\
+Resultados, validación y análisis & & & & & & X \\
+Edición de video & & & & & & X \\
+\midrule
+\textbf{Entrega 2 (miércoles 9, 13:00)} & & & & & & \\
+\bottomrule
+\end{tabularx}
+\normalsize
+
+%==========================================================
+\begin{thebibliography}{9}
+%==========================================================
+
+\bibitem{ananias1991}
+Ananías Abuter, R. A., \& Vergara, F. P. (1991). Un modelo de secado natural de eucalipto (\textit{Eucalyptus globulus} L.). \textit{Ciencia \& Investigación Forestal, 5}(2), 229--236. \url{https://doi.org/10.52904/0718-4646.1991.153}
+
+\bibitem{minenergia}
+Ministerio de Energía. (s.\,f.). \textit{Preguntas frecuentes: Ley de Biocombustibles Sólidos}. \url{https://energia.gob.cl/ley-de-biocombustibles-solidos/preguntas-frecuentes}
+
+\bibitem{mma_norma}
+Ministerio del Medio Ambiente. (s.\,f.). \textit{Norma primaria de calidad del aire para material particulado fino (MP2,5)}. \url{https://normasaire.mma.gob.cl/nambientales/normas-de-calidad-del-aire/norma-primaria-de-calidad-del-aire-para-material-particulado-fino-mp25/}
+
+\bibitem{mma_ds49}
+Ministerio del Medio Ambiente. (2016). \textit{Decreto Supremo N.º 49/2015: Establece Plan de Descontaminación Atmosférica para las comunas de Talca y Maule}. Biblioteca del Congreso Nacional de Chile. \url{https://www.bcn.cl/leychile/navegar?idNorma=1088772}
+
+\bibitem{mma2023}
+Ministerio del Medio Ambiente. (2023). \textit{Programa en revisión de diseño 2023: Calefacción Sustentable} [Ficha de reformulación]. Dirección de Presupuestos. \url{https://www.dipres.gob.cl/597/articles-285571_doc_pdf1.pdf}
+
+\bibitem{mma_cuenta2025}
+Ministerio del Medio Ambiente. (2025). \textit{Cuenta pública 2025: Plan de Descontaminación Atmosférica, comunas de Talca y Maule}. \url{https://ppda.mma.gob.cl/wp-content/uploads/2026/01/PPT_cuenta_publica_PDA_T-M_2025.pdf}
+
+\bibitem{sma2021}
+Superintendencia del Medio Ambiente. (2021). \textit{Informe del estado de avance de las medidas e instrumentos del Plan año 2019: Plan de Descontaminación Atmosférica para las comunas de Talca y Maule}. \url{https://transparencia.sma.gob.cl/doc/resoluciones/PPDA/InformeAvance/2019/InformeEstadoAvancePDATalca2019.pdf}
+
+\end{thebibliography}
+
+\end{document}
