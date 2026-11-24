@@ -76,7 +76,8 @@ def resolver(R, L, D, h_m, M0, M_eq, Nr, Nz, dt, t_max, M_obj=0.25,
     A = sp.lil_matrix((N, N))
     b = np.zeros(N)
     for i in range(Nr):
-        re, rw = (i + 1) * dr, i * dr
+        re = (i + 1) * dr
+        rw =  i * dr
         for j in range(Nz):
             k = idx(i, j)
             diag = 0.0
