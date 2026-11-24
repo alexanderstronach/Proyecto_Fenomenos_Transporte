@@ -132,7 +132,6 @@ def resolver(R, L, D, h_m, M0, M_eq, Nr, Nz, dt, t_max, M_obj=0.25,
             snaps[t[n]] = M.reshape(Nr, Nz).copy()
 
     def cruce(serie):
-        """Tiempo en que 'serie' baja de M_obj (interpolación lineal)."""
         k = np.argmax(serie <= M_obj)
         if serie[k] > M_obj:
             return np.nan
