@@ -9,7 +9,7 @@ from scipy.special import j0, j1
 # ----------------------------------------------------------------------
 # 1. Humedad de equilibrio (Realizada con isoterma de sorción Hailwood-Horrobin)
 # ----------------------------------------------------------------------
-#T_C : temperatura del aire [°C]
+#T_C : temperatura del aire
 #HR  : humedad relativa
 #Se pasa el T_C de °C a F
 def humedad_equilibrio(T_C, HR):
@@ -29,14 +29,14 @@ def humedad_equilibrio(T_C, HR):
 # ----------------------------------------------------------------------
 # 2. Coeficiente de transferencia de masa efectivo (base M)
 # ----------------------------------------------------------------------
+#Se calcula primero h_aire con Sherwood
+#y se convierte a h_m = h_aire * rho_v_sat / (rho_s * dM/dHR)
+#u: velocidad del viento 
+#d: diámetro del trozo
+#rho_s: densidad de la madera seca
+#T_C : temperatura del aire
+#HR: Humedad relativa
 def h_masa_efectivo(T_C, HR, u, d, rho_s, D_AB=2.5e-5, nu=1.5e-5):
-    """Estima h_m [m/s] en base M para una correlación de Churchill-Bernstein.
-
-    Se calcula primero h_aire [m/s] (base densidad de vapor) con Sherwood,
-    y se convierte a base M: h_m = h_aire * rho_v_sat / (rho_s * dM/dHR).
-    u: velocidad del viento [m/s]; d: diámetro del trozo [m];
-    rho_s: densidad de la madera seca [kg/m3].
-    """
     Re = u * d / nu
     Sc = nu / D_AB
     Sh = 0.3 + (0.62 * Re**0.5 * Sc**(1 / 3) / (1 + (0.4 / Sc)**(2 / 3))**0.25
