@@ -38,10 +38,11 @@ def humedad_equilibrio(T_C, HR):
 #T_C : temperatura del aire
 #HR: Humedad relativa
     
-def h_masa_efectivo(T_C, HR, u, d, rho_s, D_AB=2.5e-5, nu=1.5e-5):
+def h_masa_efectivo(T_C, HR, u, d, rho_s, D_AB, nu):
     
-    Re = u * d / nu
-    Sc = nu / D_AB
+    Nu = d * 
+    Re = u * d / Nu
+    Sc = Nu / D_AB
     Sh = 0.3 + (0.62 * Re**0.5 * Sc**(1 / 3) / (1 + (0.4 / Sc)**(2 / 3))**0.25
                 * (1 + (Re / 282000.0)**(5 / 8))**(4 / 5))
     h_aire = Sh * D_AB / d
@@ -52,20 +53,20 @@ def h_masa_efectivo(T_C, HR, u, d, rho_s, D_AB=2.5e-5, nu=1.5e-5):
               - humedad_equilibrio(T_C, max(HR - 0.05, 0.01))) / 0.1
     return h_aire * rho_v_sat / (rho_s * dM_dHR)
 
-
 # ----------------------------------------------------------------------
 # 3. Solver numérico
 # ----------------------------------------------------------------------
-#Retorna dict con: t [s], M_prom(t), M_max(t) (centro), t_prom, 
-#t_max_obj (tiempos en que se alcanza M_obj), campo final M(r,z) y malla (rc, zc),
-#y opcionalmente snapshots de M para graficar.
+# Retorna dict con: t [s], M_prom(t), M_max(t) (centro), t_prom, 
+# t_max_obj (tiempos en que se alcanza M_obj), campo final M(r,z) y malla (rc, zc)
+# y opcionalmente snapshots de M para graficar.
 def resolver(R, L, D, h_m, M0, M_eq, Nr, Nz, dt, t_max, M_obj=0.25,
              guardar_cada=None):
                  
-    dr, dz = R / Nr, (L / 2.0) / Nz
-    rc = (np.arange(Nr) + 0.5) * dr          # centros de celda en r
-    zc = (np.arange(Nz) + 0.5) * dz          # centros de celda en z
-    idx = lambda i, j: i * Nz + j            # numeración de la celda (i, j)
+    dr = R / Nr
+    dz = (L / 2.0) / Nz
+    rc = (np.arange(Nr) + 0.5) * dr    # Centros de celda en r
+    zc = (np.arange(Nz) + 0.5) * dz    # Centros de celda en z
+    idx = lambda i, j: i * Nz + j    # Numeración de la celda (i, j)
 
     # Conductancia de borde (difusión interna en medio-celda + resistencia del aire)
     U = 1.0 / (dr / (2.0 * D) + 1.0 / h_m)   # lateral  [m/s]
