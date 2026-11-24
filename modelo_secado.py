@@ -7,25 +7,23 @@ from scipy.special import j0, j1
 
 
 # ----------------------------------------------------------------------
-# 1. Humedad de equilibrio (isoterma de sorción Hailwood-Horrobin, Simpson 1973)
+# 1. Humedad de equilibrio (Realizada con isoterma de sorción Hailwood-Horrobin)
 # ----------------------------------------------------------------------
+#T_C : temperatura del aire [°C]
+#HR  : humedad relativa
+#Se pasa el T_C de °C a F
 def humedad_equilibrio(T_C, HR):
-    """Contenido de humedad de equilibrio M_eq [kg/kg, base seca].
-
-    T_C : temperatura del aire [°C]
-    HR  : humedad relativa [fracción 0-1]
-    Coeficientes de Simpson (1973) con T en °F.
-    """
+    
     T = T_C * 9.0 / 5.0 + 32.0
     W = 330.0 + 0.452 * T + 0.00415 * T**2
     K = 0.791 + 4.65e-4 * T - 1.34e-6 * T**2
     K1 = 6.34 + 7.75e-4 * T - 9.3e-5 * T**2
     K2 = 1.09 + 2.84e-2 * T - 9.04e-5 * T**2
     h = HR
-    term1 = K * h / (1.0 - K * h)
-    term2 = (K1 * K * h + 2.0 * K1 * K2 * K**2 * h**2) / (
+    termino1 = K * h / (1.0 - K * h)
+    termino2 = (K1 * K * h + 2.0 * K1 * K2 * K**2 * h**2) / (
         1.0 + K1 * K * h + K1 * K2 * K**2 * h**2)
-    return (1800.0 / W) * (term1 + term2) / 100.0
+    return (1800.0 / W) * (termino1 + termino2) / 100.0
 
 
 # ----------------------------------------------------------------------
