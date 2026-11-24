@@ -1,12 +1,4 @@
-"""
-Modelo de secado de leña: difusión de humedad 2D (r, z) transiente.
 
-Ecuación:   dM/dt = D_ef * ( d2M/dr2 + (1/r) dM/dr + d2M/dz2 )
-Dominio:    0 <= r <= R ;  0 <= z <= L/2   (simetría en z = L/2)
-Método:     volúmenes finitos centrados en celda + Euler implícito.
-
-Todas las unidades en SI (m, s, kg/kg). M está en base seca.
-"""
 import numpy as np
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
