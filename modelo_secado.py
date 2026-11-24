@@ -12,6 +12,7 @@ from scipy.special import j0, j1
 #T_C : temperatura del aire
 #HR  : humedad relativa
 #Se pasa el T_C de °C a F
+
 def humedad_equilibrio(T_C, HR):
     
     T = T_C * 9.0 / 5.0 + 32.0
@@ -36,7 +37,9 @@ def humedad_equilibrio(T_C, HR):
 #rho_s: densidad de la madera seca
 #T_C : temperatura del aire
 #HR: Humedad relativa
+    
 def h_masa_efectivo(T_C, HR, u, d, rho_s, D_AB=2.5e-5, nu=1.5e-5):
+    
     Re = u * d / nu
     Sc = nu / D_AB
     Sh = 0.3 + (0.62 * Re**0.5 * Sc**(1 / 3) / (1 + (0.4 / Sc)**(2 / 3))**0.25
@@ -53,18 +56,12 @@ def h_masa_efectivo(T_C, HR, u, d, rho_s, D_AB=2.5e-5, nu=1.5e-5):
 # ----------------------------------------------------------------------
 # 3. Solver numérico
 # ----------------------------------------------------------------------
+#Retorna dict con: t [s], M_prom(t), M_max(t) (centro), t_prom, 
+#t_max_obj (tiempos en que se alcanza M_obj), campo final M(r,z) y malla (rc, zc),
+#y opcionalmente snapshots de M para graficar.
 def resolver(R, L, D, h_m, M0, M_eq, Nr, Nz, dt, t_max, M_obj=0.25,
              guardar_cada=None):
-    """Resuelve el problema 2D con volúmenes finitos + Euler implícito.
-
-    Parámetros (unidades): R, L [m]; D [m2/s]; h_m [m/s]; M0, M_eq [kg/kg];
-    Nr, Nz: nº de celdas radiales y axiales (mitad del largo);
-    dt [s]; t_max [s]; M_obj: humedad objetivo [kg/kg].
-
-    Retorna dict con: t [s], M_prom(t), M_max(t) (centro), t_prom, t_max_obj
-    (tiempos en que se alcanza M_obj), campo final M(r,z) y malla (rc, zc),
-    y opcionalmente snapshots de M para graficar.
-    """
+                 
     dr, dz = R / Nr, (L / 2.0) / Nz
     rc = (np.arange(Nr) + 0.5) * dr          # centros de celda en r
     zc = (np.arange(Nz) + 0.5) * dz          # centros de celda en z
